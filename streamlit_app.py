@@ -5,15 +5,15 @@ import requests
 
 
 # Write directly to the app
-st.title(f" Customize Your Smoothie ")
-st.write(
-  "Choose the fruit you want in your customize smoothie"
-)
+st.title("Customize Your Smoothie")
+st.write("Choose the fruit you want in your customize smoothie")
 
 title = st.text_input("Name on Smoothie")
 st.write("The name on your smoothie will be", title)
+
 cnx = st.connection("Snowflake")
 session = cnx.session()
+
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('Fruit_Name'))
 # st.dataframe(data=my_dataframe, use_container_width=True)
 
@@ -22,18 +22,15 @@ ingredient_list = st.multiselect(
     my_dataframe,
     max_selections=5
 )
-# Instead of manual concatenation, use join:
+
 if ingredient_list:
-  ingredient_list = ''
-  for fruit_choosen in ingredient_list:
-     ingredients_string = ", ".join(ingredient_list)
-     st.subheader(fruit_choosen + 'Nutrition information'
-     smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/fruit_choosen")
-     sf_df = st.dataframe(data=smoothiefroot_response.json() , use_container_width= True)
-    
     # Join with comma separator
-   
-   
+    ingredients_string = ", ".join(ingredient_list)
+
+    for fruit_choosen in ingredient_list:
+        st.subheader(fruit_choosen + ' Nutrition information')
+        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_choosen}")
+        st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
     my_insert_stmt = f"""
         INSERT INTO smoothies.public.orders (ingredients, name_on_order)
@@ -47,15 +44,3 @@ if ingredient_list:
     if time_to_insert:   # ensure only when button clicked
         session.sql(my_insert_stmt).collect()
         st.success(f"Your Smoothie is ordered!, {title}", icon="✅")
-
-
-
-
-# st.text(smoothiefroot_response.json())
-
-
-    
-    
-
-    
-
