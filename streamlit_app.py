@@ -41,7 +41,7 @@ if ingredient_list:
         session.sql(my_insert_stmt).collect()
         st.success(f"Your Smoothie is ordered!, {title}", icon="✅")
 
-st.text(smoothiefroot_response)
+st.text(smoothiefroot_response.json())
 
     
     
